@@ -3,7 +3,16 @@ kind: ConfigMap
 metadata:
   name: wordpress-config
 data:
+  # 预发布环境开启调试（必须用字符串）
   WP_DEBUG: "true"
   WP_DEBUG_LOG: "/var/www/html/wp-content/debug.log"
   WP_DEBUG_DISPLAY: "true"
+  WP_DEBUG_DISPLAY: "true"
+  
+  # 预发布Nacos地址
   NACOS_CONFIG_ADDR: "nacos-pre.internal.com:8848"
+  
+  # 预发布环境特定配置
+  WP_MEMORY_LIMIT: "512M"
+  upload_max_filesize: "128M"
+  post_max_size: "128M"

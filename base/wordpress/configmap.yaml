@@ -11,16 +11,24 @@ data:
     define('WP_MEMORY_LIMIT', '256M');
     define('WP_MAX_MEMORY_LIMIT', '512M');
     define('DISALLOW_FILE_EDIT', true);
+    define('WP_POST_REVISIONS', 5);
+    define('AUTOSAVE_INTERVAL', 60);
   
-  # 上传限制
-  upload_max_filesize: 64M
-  post_max_size: 64M
+  # 上传限制（必须用引号）
+  upload_max_filesize: "64M"
+  post_max_size: "64M"
+  max_execution_time: "300"
+  memory_limit: "256M"
   
-  # Redis缓存配置
-  WP_REDIS_SCHEME: tcp
-  WP_REDIS_DATABASE: 0
-  WP_REDIS_TIMEOUT: 1
-  WP_REDIS_READ_TIMEOUT: 1
+  # Redis缓存配置（所有值必须用引号）
+  WP_REDIS_SCHEME: "tcp"
+  WP_REDIS_DATABASE: "0"
+  WP_REDIS_TIMEOUT: "1"
+  WP_REDIS_READ_TIMEOUT: "1"
+  WP_REDIS_MAX_CONNECTIONS: "10"
   
-  # Nacos配置中心地址（占位符，会被环境覆盖）
+  # Nacos配置
   NACOS_CONFIG_ADDR: "placeholder"
+  
+  # 其他配置
+  TZ: "Asia/Shanghai"

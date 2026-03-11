@@ -3,7 +3,7 @@ kind: Kustomization
 
 namespace: pre-release
 
-bases:
+resources:
 - ../../../base/wordpress
 - ../../../base/mysql
 - ../../../base/redis
@@ -11,24 +11,40 @@ bases:
 
 namePrefix: pre-
 
-patchesStrategicMerge:
-- patch-deployment.yaml
-- patch-configmap.yaml
+patches:
+- path: patch-deployment.yaml
+  target:
+    kind: Deployment
+- path: patch-configmap.yaml
+  target:
+    kind: ConfigMap
 
 secretGenerator:
 - name: mysql-credentials
   behavior: replace
-  files:
-  - secrets-patch.yaml
+  literals:
+  - username=root
+  - password=root
+  - database=wordpress_pre
+  - host=192.168.103.250
 - name: redis-credentials
   behavior: replace
-  files:
-  - secrets-patch.yaml
+  literals:
+  - host=redis-pre.internal.com
+  - port=6379
+  - password=${PRE_REDIS_PASSWORD}
 - name: wordpress-secrets
   behavior: replace
-  files:
-  - secrets-patch.yaml
+  literals:
+  - auth-key=${PRE_AUTH_KEY}
+  - secure-auth-key=${PRE_SECURE_AUTH_KEY}
+  - logged-in-key=${PRE_LOGGED_IN_KEY}
+  - nonce-key=${PRE_NONCE_KEY}
+  - auth-salt=${PRE_AUTH_SALT}
+  - secure-auth-salt=${PRE_SECURE_AUTH_SALT}
+  - logged-in-salt=${PRE_LOGGED_IN_SALT}
+  - nonce-salt=${PRE_NONCE_SALT}
 
 images:
 - name: wordpress
-  newTag: 6.8.3-php8.2
+  newTag: 6.4.2-php8.2-apache

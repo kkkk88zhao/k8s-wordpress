@@ -4,29 +4,20 @@ kind: Kustomization
 commonLabels:
   app: wordpress
   managed-by: kustomize
-  tier: frontend
 
 resources:
-- configmap.yaml
 - deployment.yaml
 - service.yaml
-
-configMapGenerator:
-- name: wordpress-config
-  behavior: merge
-  literals:
-  - WP_DEBUG=false
-  - UPLOAD_MAX_FILESIZE=64M
+- configmap.yaml
 
 secretGenerator:
 - name: wordpress-secrets
-  behavior: create
   literals:
-  - auth-key=please-change-in-env
-  - secure-auth-key=please-change-in-env
-  - logged-in-key=please-change-in-env
-  - nonce-key=please-change-in-env
-  - auth-salt=please-change-in-env
-  - secure-auth-salt=please-change-in-env
-  - logged-in-salt=please-change-in-env
-  - nonce-salt=please-change-in-env
+  - auth-key=placeholder
+  - secure-auth-key=placeholder
+  - logged-in-key=placeholder
+  - nonce-key=placeholder
+  - auth-salt=placeholder
+  - secure-auth-salt=placeholder
+  - logged-in-salt=placeholder
+  - nonce-salt=placeholder

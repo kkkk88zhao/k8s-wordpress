@@ -127,20 +127,11 @@ spec:
         volumeMounts:
         - name: wordpress-data
           mountPath: /var/www/html
-        - name: wp-config
-          mountPath: /var/www/html/wp-config.php
-          subPath: wp-config.php
       
       volumes:
       - name: wordpress-data
         persistentVolumeClaim:
           claimName: wordpress-pvc
-      - name: wp-config
-        configMap:
-          name: wordpress-config
-          items:
-          - key: wp-config.php
-            path: wp-config.php
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -152,3 +143,4 @@ spec:
   resources:
     requests:
       storage: 10Gi
+  storageClassName: managed-nfs-storage

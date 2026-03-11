@@ -11,6 +11,6 @@ resources:
 secretGenerator:
 - name: redis-credentials
   literals:
-  - host=redis-external
+  - host=placeholder
   - port=6379
-  - password=changeme
+  - password=placeholder
