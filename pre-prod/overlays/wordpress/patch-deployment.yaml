@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wordpress
+spec:
+  replicas: 2  # 预发布环境2个副本
+  template:
+    spec:
+      containers:
+      - name: wordpress
+        image: swr.cn-north-4.myhuaweicloud.com/ddn-k8s/docker.io/wordpress:6.8.3-php8.2
+        env:
+        - name: WORDPRESS_DEBUG
+          value: "true"  # 预发布开启调试
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "200m"
+          limits:
+            memory: "512Mi"
+            cpu: "400m"

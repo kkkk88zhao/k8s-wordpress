@@ -1,0 +1,32 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+commonLabels:
+  app: wordpress
+  managed-by: kustomize
+  tier: frontend
+
+resources:
+- configmap.yaml
+- deployment.yaml
+- service.yaml
+
+configMapGenerator:
+- name: wordpress-config
+  behavior: merge
+  literals:
+  - WP_DEBUG=false
+  - UPLOAD_MAX_FILESIZE=64M
+
+secretGenerator:
+- name: wordpress-secrets
+  behavior: create
+  literals:
+  - auth-key=please-change-in-env
+  - secure-auth-key=please-change-in-env
+  - logged-in-key=please-change-in-env
+  - nonce-key=please-change-in-env
+  - auth-salt=please-change-in-env
+  - secure-auth-salt=please-change-in-env
+  - logged-in-salt=please-change-in-env
+  - nonce-salt=please-change-in-env

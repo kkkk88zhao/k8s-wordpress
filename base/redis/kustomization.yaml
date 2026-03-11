@@ -1,0 +1,16 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+commonLabels:
+  app: redis
+  type: external
+
+resources:
+- external-service.yaml
+
+secretGenerator:
+- name: redis-credentials
+  literals:
+  - host=redis-external
+  - port=6379
+  - password=changeme

@@ -1,0 +1,34 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: pre-release
+
+bases:
+- ../../../base/wordpress
+- ../../../base/mysql
+- ../../../base/redis
+- ../../../base/nacos
+
+namePrefix: pre-
+
+patchesStrategicMerge:
+- patch-deployment.yaml
+- patch-configmap.yaml
+
+secretGenerator:
+- name: mysql-credentials
+  behavior: replace
+  files:
+  - secrets-patch.yaml
+- name: redis-credentials
+  behavior: replace
+  files:
+  - secrets-patch.yaml
+- name: wordpress-secrets
+  behavior: replace
+  files:
+  - secrets-patch.yaml
+
+images:
+- name: wordpress
+  newTag: 6.8.3-php8.2

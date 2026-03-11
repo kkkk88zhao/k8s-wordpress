@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: wordpress-config
+  labels:
+    app: wordpress
+data:
+  # WordPress基础配置
+  WORDPRESS_CONFIG_EXTRA: |
+    define('WP_DEBUG', false);
+    define('WP_MEMORY_LIMIT', '256M');
+    define('WP_MAX_MEMORY_LIMIT', '512M');
+    define('DISALLOW_FILE_EDIT', true);
+  
+  # 上传限制
+  upload_max_filesize: 64M
+  post_max_size: 64M
+  
+  # Redis缓存配置
+  WP_REDIS_SCHEME: tcp
+  WP_REDIS_DATABASE: 0
+  WP_REDIS_TIMEOUT: 1
+  WP_REDIS_READ_TIMEOUT: 1
+  
+  # Nacos配置中心地址（占位符，会被环境覆盖）
+  NACOS_CONFIG_ADDR: "placeholder"

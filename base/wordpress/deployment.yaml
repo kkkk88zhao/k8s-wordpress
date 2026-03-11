@@ -1,0 +1,154 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wordpress
+  labels:
+    app: wordpress
+spec:
+  replicas: 2  # 基础值，会被环境覆盖
+  selector:
+    matchLabels:
+      app: wordpress
+  template:
+    metadata:
+      labels:
+        app: wordpress
+    spec:
+      containers:
+      - name: wordpress
+        #image: wordpress:6.4.2-php8.2-apache  # 固定版本，不建议用latest
+        image: swr.cn-north-4.myhuaweicloud.com/ddn-k8s/docker.io/wordpress:6.8.3-php8.2
+        ports:
+        - containerPort: 80
+          name: http
+        - containerPort: 443
+          name: https
+        env:
+        # 数据库配置（从Secret读取）
+        - name: WORDPRESS_DB_HOST
+          valueFrom:
+            secretKeyRef:
+              name: mysql-credentials
+              key: host
+        - name: WORDPRESS_DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: mysql-credentials
+              key: username
+        - name: WORDPRESS_DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-credentials
+              key: password
+        - name: WORDPRESS_DB_NAME
+          valueFrom:
+            secretKeyRef:
+              name: mysql-credentials
+              key: database
+        
+        # Redis配置
+        - name: WP_REDIS_HOST
+          valueFrom:
+            secretKeyRef:
+              name: redis-credentials
+              key: host
+        - name: WP_REDIS_PORT
+          valueFrom:
+            secretKeyRef:
+              name: redis-credentials
+              key: port
+        - name: WP_REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: redis-credentials
+              key: password
+        
+        # Nacos配置
+        - name: NACOS_SERVER_ADDR
+          valueFrom:
+            configMapKeyRef:
+              name: wordpress-config
+              key: NACOS_CONFIG_ADDR
+        
+        # WordPress安全密钥（从Secret读取）
+        - name: AUTH_KEY
+          valueFrom:
+            secretKeyRef:
+              name: wordpress-secrets
+              key: auth-key
+        - name: SECURE_AUTH_KEY
+          valueFrom:
+            secretKeyRef:
+              name: wordpress-secrets
+              key: secure-auth-key
+        - name: LOGGED_IN_KEY
+          valueFrom:
+            secretKeyRef:
+              name: wordpress-secrets
+              key: logged-in-key
+        - name: NONCE_KEY
+          valueFrom:
+            secretKeyRef:
+              name: wordpress-secrets
+              key: nonce-key
+        - name: AUTH_SALT
+          valueFrom:
+            secretKeyRef:
+              name: wordpress-secrets
+              key: auth-salt
+        - name: SECURE_AUTH_SALT
+          valueFrom:
+            secretKeyRef:
+              name: wordpress-secrets
+              key: secure-auth-salt
+        - name: LOGGED_IN_SALT
+          valueFrom:
+            secretKeyRef:
+              name: wordpress-secrets
+              key: logged-in-salt
+        - name: NONCE_SALT
+          valueFrom:
+            secretKeyRef:
+              name: wordpress-secrets
+              key: nonce-salt
+        
+        envFrom:
+        - configMapRef:
+            name: wordpress-config
+        
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        
+        volumeMounts:
+        - name: wordpress-data
+          mountPath: /var/www/html
+        - name: wp-config
+          mountPath: /var/www/html/wp-config.php
+          subPath: wp-config.php
+      
+      volumes:
+      - name: wordpress-data
+        persistentVolumeClaim:
+          claimName: wordpress-pvc
+      - name: wp-config
+        configMap:
+          name: wordpress-config
+          items:
+          - key: wp-config.php
+            path: wp-config.php
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: wordpress-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
